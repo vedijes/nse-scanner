@@ -5,19 +5,293 @@ import io
 import os
 from datetime import datetime, timedelta
 
-st.set_page_config(page_title="NSE Pro Scanner", page_icon="📱", layout="wide")
+st.set_page_config(page_title="NSE Pro Terminal", page_icon="💎", layout="wide")
 
-# மொபைல் ஸ்கிரீனுக்கு ஏற்றவாறு மேல் மற்றும் பக்கவாட்டு இடைவெளிகளைக் குறைக்கும் CSS
+# ==========================================
+# 🎨 ULTRA-PREMIUM FINTECH UI CSS (DESIGNER EDITION)
+# ==========================================
 st.markdown("""
 <style>
-    .block-container {
-        padding-top: 1.2rem;
-        padding-bottom: 1rem;
-        padding-left: 0.8rem;
-        padding-right: 0.8rem;
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    
+    html, body, [class*="css"] {
+        font-family: 'Plus Jakarta Sans', sans-serif !important;
+        background-color: #090D16 !important;
+        color: #F8FAFC !important;
     }
-    div[data-testid="stMetricValue"] {
-        font-size: 1.3rem;
+    .block-container {
+        padding-top: 1rem !important;
+        padding-bottom: 3rem !important;
+        padding-left: 0.9rem !important;
+        padding-right: 0.9rem !important;
+        max-width: 650px !important;
+        margin: auto !important;
+    }
+    
+    /* Premium Header Banner */
+    .hero-card {
+        background: radial-gradient(circle at top right, #1E293B, #0F172A 70%);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 20px;
+        padding: 18px 20px;
+        margin-bottom: 14px;
+        box-shadow: 0 12px 30px -10px rgba(0, 0, 0, 0.6);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .hero-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        background: linear-gradient(90deg, #38BDF8, #818CF8, #C084FC);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin: 0;
+        letter-spacing: -0.5px;
+    }
+    .hero-sub {
+        font-size: 0.75rem;
+        color: #94A3B8;
+        margin-top: 3px;
+        font-weight: 500;
+    }
+    .live-pill {
+        background: rgba(16, 185, 129, 0.12);
+        border: 1px solid rgba(16, 185, 129, 0.35);
+        color: #34D399;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 5px 10px;
+        border-radius: 99px;
+        letter-spacing: 0.5px;
+        text-transform: uppercase;
+    }
+
+    /* Bento Summary Grid */
+    .bento-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+        margin-bottom: 16px;
+    }
+    .bento-box {
+        background: rgba(30, 41, 59, 0.45);
+        border: 1px solid rgba(255, 255, 255, 0.06);
+        border-radius: 14px;
+        padding: 10px 12px;
+        text-align: center;
+    }
+    .bento-label {
+        font-size: 0.65rem;
+        color: #94A3B8;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        font-weight: 600;
+    }
+    .bento-val {
+        font-size: 0.95rem;
+        font-weight: 800;
+        color: #F8FAFC;
+        margin-top: 3px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    /* Glassmorphism Stock Card */
+    .stock-card {
+        background: linear-gradient(145deg, rgba(30, 41, 59, 0.65), rgba(15, 23, 42, 0.85));
+        border: 1px solid rgba(255, 255, 255, 0.07);
+        border-radius: 18px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 8px 20px -6px rgba(0, 0, 0, 0.5);
+        transition: transform 0.15s ease, border-color 0.15s ease;
+    }
+    .stock-card:hover {
+        border-color: rgba(56, 189, 248, 0.4);
+    }
+    
+    .sc-top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 12px;
+    }
+    .sc-symbol-wrap {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+    }
+    .sc-symbol {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #FFFFFF;
+        letter-spacing: -0.3px;
+    }
+    .badge-fno {
+        background: rgba(245, 158, 11, 0.15);
+        border: 1px solid rgba(245, 158, 11, 0.4);
+        color: #FBBF24;
+        font-size: 0.6rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 6px;
+    }
+    .badge-streak {
+        background: rgba(168, 85, 247, 0.18);
+        border: 1px solid rgba(168, 85, 247, 0.45);
+        color: #C084FC;
+        font-size: 0.6rem;
+        font-weight: 700;
+        padding: 2px 6px;
+        border-radius: 6px;
+    }
+    .sc-sub-pills {
+        display: flex;
+        gap: 6px;
+        margin-top: 5px;
+        align-items: center;
+    }
+    .pill-buyer {
+        background: rgba(16, 185, 129, 0.12);
+        color: #34D399;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 6px;
+    }
+    .pill-seller {
+        background: rgba(239, 68, 68, 0.12);
+        color: #F87171;
+        font-size: 0.65rem;
+        font-weight: 700;
+        padding: 2px 8px;
+        border-radius: 6px;
+    }
+    .pill-neutral {
+        background: rgba(148, 163, 184, 0.12);
+        color: #94A3B8;
+        font-size: 0.65rem;
+        font-weight: 600;
+        padding: 2px 7px;
+        border-radius: 6px;
+    }
+
+    .sc-price-box {
+        text-align: right;
+    }
+    .sc-price {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: #F8FAFC;
+    }
+    .chg-up {
+        display: inline-block;
+        background: rgba(16, 185, 129, 0.18);
+        color: #34D399;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 6px;
+        margin-top: 3px;
+    }
+    .chg-down {
+        display: inline-block;
+        background: rgba(239, 68, 68, 0.18);
+        color: #F87171;
+        font-size: 0.72rem;
+        font-weight: 700;
+        padding: 2px 7px;
+        border-radius: 6px;
+        margin-top: 3px;
+    }
+
+    /* Metrics Inner Box */
+    .sc-metrics {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        background: rgba(9, 13, 22, 0.65);
+        border: 1px solid rgba(255, 255, 255, 0.04);
+        border-radius: 12px;
+        padding: 10px;
+        margin-bottom: 12px;
+        text-align: center;
+    }
+    .m-lbl {
+        font-size: 0.63rem;
+        color: #64748B;
+        text-transform: uppercase;
+        font-weight: 700;
+        letter-spacing: 0.4px;
+    }
+    .m-val {
+        font-size: 0.92rem;
+        font-weight: 800;
+        color: #E2E8F0;
+        margin-top: 2px;
+    }
+    .m-val-accent {
+        font-size: 0.92rem;
+        font-weight: 800;
+        color: #38BDF8;
+        margin-top: 2px;
+    }
+    .m-val-gold {
+        font-size: 0.92rem;
+        font-weight: 800;
+        color: #FBBF24;
+        margin-top: 2px;
+    }
+
+    /* Footer Progress & Chart Link */
+    .sc-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+    }
+    .prog-wrap {
+        flex-grow: 1;
+    }
+    .prog-bg {
+        width: 100%;
+        height: 6px;
+        background: rgba(255, 255, 255, 0.07);
+        border-radius: 99px;
+        overflow: hidden;
+    }
+    .prog-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #06B6D4, #3B82F6, #8B5CF6);
+        border-radius: 99px;
+    }
+    .tv-btn {
+        background: rgba(56, 189, 248, 0.12);
+        border: 1px solid rgba(56, 189, 248, 0.3);
+        color: #38BDF8 !important;
+        text-decoration: none !important;
+        font-size: 0.73rem;
+        font-weight: 700;
+        padding: 6px 12px;
+        border-radius: 10px;
+        white-space: nowrap;
+        transition: all 0.2s;
+    }
+    .tv-btn:hover {
+        background: rgba(56, 189, 248, 0.25);
+    }
+
+    /* Button Overrides */
+    div.stButton > button[kind="primary"] {
+        background: linear-gradient(135deg, #2563EB, #7C3AED) !important;
+        border: none !important;
+        border-radius: 14px !important;
+        padding: 0.65rem 1rem !important;
+        font-weight: 700 !important;
+        font-size: 0.95rem !important;
+        box-shadow: 0 8px 20px -6px rgba(124, 58, 237, 0.6) !important;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -25,7 +299,6 @@ st.markdown("""
 CACHE_DIR = "nse_data_cache"
 os.makedirs(CACHE_DIR, exist_ok=True)
 
-# முக்கிய F&O ஸ்டாக்ஸ் பட்டியல் (⚡ F&O Filter-க்காக)
 FNO_STOCKS = {
     'AARTIIND', 'ABB', 'ABBOTINDIA', 'ABCAPITAL', 'ABFRL', 'ACC', 'ADANIENT', 'ADANIPORTS', 'ALKEM', 'AMBUJACEM',
     'APOLLOHOSP', 'APOLLOTYRE', 'ASHOKLEY', 'ASIANPAINT', 'ASTRAL', 'ATUL', 'AUBANK', 'AUROPHARMA', 'AXISBANK', 'BAJAJ-AUTO',
@@ -47,23 +320,32 @@ FNO_STOCKS = {
     'UBL', 'ULTRACEMCO', 'UNITDSPR', 'UPL', 'VEDL', 'VOLTAS', 'WIPRO', 'ZYDUSLIFE', 'ZOMATO', 'JIOFIN', 'NHPC', 'IRFC'
 }
 
-st.markdown("### 📱 NSE Pro Delivery Scanner")
+# Hero Header Render
+st.markdown("""
+<div class="hero-card">
+    <div>
+        <div class="hero-title">💎 NSE Pro Terminal</div>
+        <div class="hero-sub">Institutional Volume & Delivery Intelligence</div>
+    </div>
+    <div class="live-pill">🛡️ Safe Cache</div>
+</div>
+""", unsafe_allow_html=True)
 
-# மொபைலுக்கு ஏற்ற மெயின் ஸ்கிரீன் செட்டிங்ஸ் பாக்ஸ் (Sidebar தேட வேண்டாம்!)
-with st.expander("⚙️ Scanner Filters & Settings (மாற்ற இங்கே தொடவும்)", expanded=False):
+# Settings & X-Ray Controls
+with st.expander("🎛️ Scanner Filters & Settings", expanded=False):
     c1, c2 = st.columns(2)
     with c1:
-        lookback_days = st.slider("Lookback Days (ஆவரேஜ்)", 3, 10, 5)
-        high_deliv_pct_limit = st.slider("High Delivery % Limit", 50, 90, 70)
+        lookback_days = st.slider("Lookback Days", 3, 10, 5)
+        high_deliv_pct_limit = st.slider("Min Delivery %", 50, 90, 70)
         fno_only = st.checkbox("⚡ F&O Stocks Only", value=False)
     with c2:
         min_turnover_cr = st.number_input("Min Turnover (₹ Cr)", value=15.0, step=5.0)
-        spike_multiplier = st.slider("Volume Spike (X times)", 1.2, 5.0, 2.0, step=0.1)
-        exclude_etfs = st.checkbox("🚫 ETFs & Bees தவிர்க்க", value=True)
+        spike_multiplier = st.slider("Volume Spike (X)", 1.2, 5.0, 2.0, step=0.1)
+        exclude_etfs = st.checkbox("🚫 Hide ETFs/Bees", value=True)
         
     st.markdown("---")
-    uploaded_files = st.file_uploader("📂 Manual CSV Upload (ஆப்ஷனல்)", type=['csv'], accept_multiple_files=True)
-    if st.button("🗑️ Clear Saved Cache"):
+    uploaded_files = st.file_uploader("📂 Manual CSV Upload", type=['csv'], accept_multiple_files=True)
+    if st.button("🗑️ Clear Saved Cache", use_container_width=True):
         for f in os.listdir(CACHE_DIR):
             os.remove(os.path.join(CACHE_DIR, f))
         st.session_state.market_data = None
@@ -117,7 +399,7 @@ def get_multi_day_data(target_days):
     collected_dfs = []
     check_date = datetime.now()
     attempts = 0
-    progress_bar = st.progress(0, text="டேட்டா லோடு ஆகிறது...")
+    progress_bar = st.progress(0, text="Syncing Market Data...")
     
     while len(collected_dfs) < target_days and attempts < 25:
         if check_date.weekday() < 5:
@@ -125,7 +407,7 @@ def get_multi_day_data(target_days):
             if df is not None and not df.empty:
                 collected_dfs.append((check_date.strftime("%d-%b-%Y"), df))
                 progress_bar.progress(len(collected_dfs) / target_days, 
-                                      text=f"Loaded: {check_date.strftime('%d-%b-%Y')}")
+                                      text=f"Synced: {check_date.strftime('%d-%b-%Y')}")
         check_date -= timedelta(days=1)
         attempts += 1
         
@@ -135,8 +417,11 @@ def get_multi_day_data(target_days):
 if "market_data" not in st.session_state:
     st.session_state.market_data = None
 
-# மெயின் பட்டன் (மொபைல் முழு அகலத்திற்கு)
-if st.button("🚀 Load / Scan Market Data", type="primary", use_container_width=True):
+# Auto-load if cache already exists on startup
+if st.session_state.market_data is None and len(os.listdir(CACHE_DIR)) >= 3:
+    st.session_state.market_data = get_multi_day_data(lookback_days + 1)
+
+if st.button("⚡ Sync / Refresh Market Data", type="primary", use_container_width=True):
     st.session_state.market_data = get_multi_day_data(lookback_days + 1)
 
 if uploaded_files:
@@ -151,46 +436,45 @@ data_list = st.session_state.market_data
 
 if data_list:
     latest_date, today_df = data_list[0][0], data_list[0][1].copy()
-    st.caption(f"🛡️ **Safe Cache Active** | 📅 Date: **{latest_date}** ({len(data_list)} Days Data)")
 
-    # ==========================================
-    # 🔍 FEATURE 1: SINGLE STOCK X-RAY SEARCH
-    # ==========================================
-    with st.expander("🔍 Single Stock X-Ray (தனி ஸ்டாக் ஜாதகம் பார்க்க)", expanded=False):
+    # Single Stock X-Ray Expander
+    with st.expander("🔍 Single Stock X-Ray (தனி ஸ்டாக் ஜாதகம்)", expanded=False):
         all_symbols = sorted(today_df['SYMBOL'].unique().tolist())
         default_idx = all_symbols.index("RELIANCE") if "RELIANCE" in all_symbols else 0
-        selected_stock = st.selectbox("ஸ்டாக் பெயரை டைப் செய்யவும்:", all_symbols, index=default_idx)
+        selected_stock = st.selectbox("Select Stock:", all_symbols, index=default_idx)
         
         if selected_stock:
-            xray_rows = []
             for d_label, df_day in data_list:
                 row = df_day[df_day['SYMBOL'] == selected_stock]
                 if not row.empty:
                     r = row.iloc[0]
                     chg = round(((r['CLOSE_PRICE'] - r['PREV_CLOSE']) / r['PREV_CLOSE']) * 100, 2)
                     vwap = r['AVG_PRICE'] if 'AVG_PRICE' in r and pd.notna(r['AVG_PRICE']) else r['CLOSE_PRICE']
-                    ctrl = "🟢 Buyers" if r['CLOSE_PRICE'] >= vwap else "🔴 Sellers"
+                    is_buyer = r['CLOSE_PRICE'] >= vwap
+                    ctrl_badge = '<span class="pill-buyer">🟢 Buyers</span>' if is_buyer else '<span class="pill-seller">🔴 Sellers</span>'
+                    chg_badge = f'<span class="chg-up">+{chg}%</span>' if chg >= 0 else f'<span class="chg-down">{chg}%</span>'
                     deliv_cr = round((r['DELIV_QTY'] * r['CLOSE_PRICE']) / 10000000, 2)
-                    xray_rows.append({
-                        "Date": d_label[:6],
-                        "Close": f"₹{r['CLOSE_PRICE']:.1f}",
-                        "Chg%": f"{chg}%",
-                        "Deliv%": f"{r['DELIV_PER']:.1f}%",
-                        "Deliv(Cr)": f"₹{deliv_cr}Cr",
-                        "Control": ctrl
-                    })
-            st.dataframe(pd.DataFrame(xray_rows), use_container_width=True, hide_index=True)
+                    
+                    st.markdown(f"""
+                    <div style="background:rgba(30,41,59,0.5); border:1px solid rgba(255,255,255,0.06); border-radius:12px; padding:10px 14px; margin-bottom:8px; display:flex; justify-content:space-between; align-items:center;">
+                        <div>
+                            <div style="font-weight:700; font-size:0.85rem; color:#E2E8F0;">{d_label}</div>
+                            <div style="margin-top:4px;">{ctrl_badge} <span class="pill-neutral">₹{deliv_cr} Cr Deliv</span></div>
+                        </div>
+                        <div style="text-align:right;">
+                            <div style="font-weight:800; font-size:0.95rem;">₹{r['CLOSE_PRICE']:.1f} {chg_badge}</div>
+                            <div style="font-size:0.75rem; color:#38BDF8; font-weight:700; margin-top:3px;">Delivery: {r['DELIV_PER']:.1f}%</div>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
 
-    # ==========================================
-    # FILTERS & PRO CALCULATIONS
-    # ==========================================
+    # Filtering Logic
     if exclude_etfs:
         etf_keywords = ['BEES', 'ETF', 'LIQUID', 'NIFTY', 'SENSEX', 'GOLD', 'SILVER', 'IETF', 'CASE', 'ADD', 'BETA', 'ALPHA']
         pattern = '|'.join(etf_keywords)
         today_df = today_df[~today_df['SYMBOL'].str.contains(pattern, case=False, na=False)].copy()
         today_df = today_df[~((today_df['CLOSE_PRICE'].between(999, 1001)) & (today_df['HIGH_PRICE'] - today_df['LOW_PRICE'] < 1))].copy()
 
-    # ⚡ FEATURE 2: F&O ONLY FILTER
     if fno_only:
         today_df = today_df[today_df['SYMBOL'].isin(FNO_STOCKS)].copy()
 
@@ -198,15 +482,11 @@ if data_list:
     today_df['TURNOVER_CR'] = (today_df['TURNOVER_LACS'] / 100).round(2)
     today_df['DELIV_VAL_CR'] = ((today_df['DELIV_QTY'] * today_df['CLOSE_PRICE']) / 10000000).round(2)
 
-    # 📊 FEATURE 3: VWAP vs CLOSE PRICE (Buyer/Seller Control)
     if 'AVG_PRICE' in today_df.columns:
-        today_df['VWAP_SIGNAL'] = today_df.apply(
-            lambda r: "🟢 Buyer" if r['CLOSE_PRICE'] >= r['AVG_PRICE'] else "🔴 Seller", axis=1
-        )
+        today_df['IS_BUYER'] = today_df['CLOSE_PRICE'] >= today_df['AVG_PRICE']
     else:
-        today_df['VWAP_SIGNAL'] = "⚪ N/A"
+        today_df['IS_BUYER'] = True
 
-    # ⚡ FEATURE 4: INTRADAY RECOVERY / DAY'S HIGH CLOSE (Close in Top 25% of Day's Range)
     day_range = (today_df['HIGH_PRICE'] - today_df['LOW_PRICE']).replace(0, 0.01)
     today_df['RANGE_POS_PCT'] = (((today_df['CLOSE_PRICE'] - today_df['LOW_PRICE']) / day_range) * 100).round(0)
 
@@ -237,32 +517,8 @@ if data_list:
         merged['3D_STREAK'] = False
 
     base_df = merged[merged['TURNOVER_CR'] >= min_turnover_cr].copy()
-    base_df['CHART'] = "https://in.tradingview.com/chart/?symbol=NSE:" + base_df['SYMBOL']
 
-    # மொபைலுக்கு ஏற்ற கச்சிதமான காலம் வரிசை (Compact Columns)
-    display_cols = ['SYMBOL', 'CLOSE_PRICE', 'PRICE_CHG_PCT', 'DELIV_PER', 'DELIV_SPIKE_X', 'VWAP_SIGNAL', 'DELIV_VAL_CR', 'CHART']
-
-    def show_mobile_table(df_to_show):
-        st.caption(f"📊 மொத்தம் **{len(df_to_show)} ஸ்டாக்ஸ்** ஃபில்டர் செய்யப்பட்டுள்ளன:")
-        st.dataframe(
-            df_to_show[display_cols],
-            use_container_width=True,
-            hide_index=True,
-            column_config={
-                "SYMBOL": st.column_config.TextColumn("Stock"),
-                "CLOSE_PRICE": st.column_config.NumberColumn("Price", format="₹%.1f"),
-                "PRICE_CHG_PCT": st.column_config.NumberColumn("Chg%", format="%.1f%%"),
-                "DELIV_PER": st.column_config.NumberColumn("Deliv%", format="%.1f%%"),
-                "DELIV_SPIKE_X": st.column_config.NumberColumn("Spike", format="%.1fX"),
-                "VWAP_SIGNAL": st.column_config.TextColumn("Control"),
-                "DELIV_VAL_CR": st.column_config.NumberColumn("Deliv(Cr)", format="₹%.1fCr"),
-                "CHART": st.column_config.LinkColumn("Chart", display_text="📈 View")
-            }
-        )
-
-    # ==========================================
-    # 📱 MOBILE-FRIENDLY SCAN SELECTOR (DROPDOWN)
-    # ==========================================
+    # Scan Selector
     scan_options = [
         "🔥 1. Bullish Accumulation (Price Up + Deliv Spike)",
         "⚡ 2. Day's High Close + Heavy Delivery (Strong Close)",
@@ -276,54 +532,116 @@ if data_list:
         "💰 10. High Delivery Value (Top Crores)"
     ]
     
-    selected_scan = st.selectbox("🎯 பார்க்க வேண்டிய ஸ்கேனை தேர்வு செய்யவும்:", scan_options)
+    selected_scan = st.selectbox("🎯 Select Institutional Scan:", scan_options)
 
     if selected_scan.startswith("🔥 1."):
-        st.info("💡 Price > +1.5% Up + Delivery Spike + Buyers above VWAP (பக்கா Institutional Buying!)")
-        res = base_df[(base_df['PRICE_CHG_PCT'] >= 1.5) & (base_df['DELIV_SPIKE_X'] >= spike_multiplier) & (base_df['DELIV_PER'] >= 55) & (base_df['VWAP_SIGNAL'] == "🟢 Buyer")].sort_values(by='DELIV_SPIKE_X', ascending=False)
-        show_mobile_table(res)
-
+        res = base_df[(base_df['PRICE_CHG_PCT'] >= 1.5) & (base_df['DELIV_SPIKE_X'] >= spike_multiplier) & (base_df['DELIV_PER'] >= 55) & (base_df['IS_BUYER'] == True)].sort_values(by='DELIV_SPIKE_X', ascending=False)
     elif selected_scan.startswith("⚡ 2."):
-        st.info("💡 மார்க்கெட் முடியும்போது அன்றைய உச்ச விலைக்கு (Day's High-க்கு மிக அருகில்) Heavy Delivery-யுடன் க்ளோஸ் ஆன ஸ்டாக்ஸ்!")
         res = base_df[(base_df['RANGE_POS_PCT'] >= 75) & (base_df['PRICE_CHG_PCT'] > 0.5) & (base_df['DELIV_SPIKE_X'] >= 1.5) & (base_df['DELIV_PER'] >= 55)].sort_values(by='DELIV_SPIKE_X', ascending=False)
-        show_mobile_table(res)
-
     elif selected_scan.startswith("🤫 3."):
-        st.info("💡 விலை பெருசா மாறாமல் (-1% to +1.2%) சத்தமில்லாமல் Heavy Delivery நடந்த ஸ்டாக்ஸ் (Pre-Breakout)")
         res = base_df[(base_df['PRICE_CHG_PCT'].between(-1.0, 1.2)) & (base_df['DELIV_SPIKE_X'] >= spike_multiplier) & (base_df['DELIV_PER'] >= 60)].sort_values(by='DELIV_SPIKE_X', ascending=False)
-        show_mobile_table(res)
-
     elif selected_scan.startswith("🔒 4."):
-        st.info(f"💡 StockEdge Premium: டெலிவரி குவான்டிட்டி {spike_multiplier}X மடங்கு அதிகம் + டெலிவரி % >= 60%")
         res = base_df[(base_df['DELIV_SPIKE_X'] >= spike_multiplier) & (base_df['DELIV_PER'] >= 60)].sort_values(by='DELIV_SPIKE_X', ascending=False)
-        show_mobile_table(res)
-
     elif selected_scan.startswith("🔒 5."):
-        st.info(f"💡 StockEdge Premium: Total Trade Quantity & Delivery Quantity இரண்டுமே {spike_multiplier}X மடங்கு எகிறிய ஸ்டாக்ஸ்")
         res = base_df[(base_df['TRD_SPIKE_X'] >= spike_multiplier) & (base_df['DELIV_SPIKE_X'] >= spike_multiplier)].sort_values(by='DELIV_SPIKE_X', ascending=False)
-        show_mobile_table(res)
-
     elif selected_scan.startswith("📈 6."):
-        st.info("💡 தொடர்ந்து கடந்த 3 நாட்களாக டெலிவரி குவான்டிட்டி ஏறிக்கொண்டே போகும் ஸ்டாக்ஸ்")
         res = base_df[base_df['3D_STREAK'] == True].sort_values(by='DELIV_PER', ascending=False)
-        show_mobile_table(res)
-
     elif selected_scan.startswith("📊 7."):
-        st.info(f"💡 டெலிவரி பர்சன்டேஜ் {high_deliv_pct_limit}%-க்கு மேல் இருக்கும் Pure Stocks")
         res = base_df[base_df['DELIV_PER'] >= high_deliv_pct_limit].sort_values(by='DELIV_PER', ascending=False)
-        show_mobile_table(res)
-
     elif selected_scan.startswith("🚀 8."):
-        st.info(f"💡 கடந்த நாட்களின் ஆவரேஜை விட {spike_multiplier}X மடங்கு அதிக டெலிவரி குவான்டிட்டி நடந்த ஸ்டாக்ஸ்")
         res = base_df[base_df['DELIV_SPIKE_X'] >= spike_multiplier].sort_values(by='DELIV_SPIKE_X', ascending=False)
-        show_mobile_table(res)
-
     elif selected_scan.startswith("📢 9."):
-        st.info(f"💡 கடந்த நாட்களின் ஆவரேஜை விட {spike_multiplier}X மடங்கு அதிக Total Trade Quantity நடந்த ஸ்டாக்ஸ்")
         res = base_df[base_df['TRD_SPIKE_X'] >= spike_multiplier].sort_values(by='TRD_SPIKE_X', ascending=False)
-        show_mobile_table(res)
-
-    elif selected_scan.startswith("💰 10."):
-        st.info("💡 அதிக கோடி ரூபாய்க்கு (Delivery Value in Crores) டெலிவரி எடுக்கப்பட்ட டாப் 50 ஸ்டாக்ஸ்")
+    else:
         res = base_df.sort_values(by='DELIV_VAL_CR', ascending=False).head(50)
-        show_mobile_table(res)
+
+    # ==========================================
+    # 📊 BENTO SUMMARY METRICS
+    # ==========================================
+    top_spike_str = f"{res['DELIV_SPIKE_X'].max():.1f}X" if not res.empty else "0X"
+    st.markdown(f"""
+    <div class="bento-grid">
+        <div class="bento-box">
+            <div class="bento-label">📅 Market Date</div>
+            <div class="bento-val">{latest_date[:6]}</div>
+        </div>
+        <div class="bento-box">
+            <div class="bento-label">🎯 Stocks Found</div>
+            <div class="bento-val" style="color:#38BDF8;">{len(res)} Stocks</div>
+        </div>
+        <div class="bento-box">
+            <div class="bento-label">🚀 Max Spike</div>
+            <div class="bento-val" style="color:#FBBF24;">{top_spike_str}</div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
+    # ==========================================
+    # 💎 RENDER DESIGNER GLASS STOCK CARDS
+    # ==========================================
+    if res.empty:
+        st.warning("இந்த ஃபில்டரில் ஸ்டாக்ஸ் எதுவும் சிக்கவில்லை. Settings-ல் Spike அல்லது Turnover அளவைக் குறைத்துப் பார்க்கவும்.")
+    else:
+        for _, row in res.head(60).iterrows():
+            sym = row['SYMBOL']
+            price = row['CLOSE_PRICE']
+            chg = row['PRICE_CHG_PCT']
+            deliv_pct = min(max(row['DELIV_PER'], 0), 100)
+            d_spike = row['DELIV_SPIKE_X'] if pd.notna(row['DELIV_SPIKE_X']) else 1.0
+            v_spike = row['TRD_SPIKE_X'] if pd.notna(row['TRD_SPIKE_X']) else 1.0
+            deliv_cr = row['DELIV_VAL_CR']
+            rng_pos = int(row['RANGE_POS_PCT']) if pd.notna(row['RANGE_POS_PCT']) else 50
+            
+            # Badges
+            fno_html = '<span class="badge-fno">⚡ F&O</span>' if sym in FNO_STOCKS else ''
+            streak_html = '<span class="badge-streak">🔥 3D SURGE</span>' if row.get('3D_STREAK', False) else ''
+            
+            chg_html = f'<span class="chg-up">▲ +{chg:.2f}%</span>' if chg >= 0 else f'<span class="chg-down">▼ {chg:.2f}%</span>'
+            ctrl_html = '<span class="pill-buyer">🟢 Buyers > VWAP</span>' if row['IS_BUYER'] else '<span class="pill-seller">🔴 Below VWAP</span>'
+            
+            tv_url = f"https://in.tradingview.com/chart/?symbol=NSE:{sym}"
+
+            card_html = f"""
+            <div class="stock-card">
+                <div class="sc-top">
+                    <div>
+                        <div class="sc-symbol-wrap">
+                            <span class="sc-symbol">{sym}</span>
+                            {fno_html}
+                            {streak_html}
+                        </div>
+                        <div class="sc-sub-pills">
+                            {ctrl_html}
+                            <span class="pill-neutral">Day High Pos: {rng_pos}%</span>
+                        </div>
+                    </div>
+                    <div class="sc-price-box">
+                        <div class="sc-price">₹{price:,.2f}</div>
+                        {chg_html}
+                    </div>
+                </div>
+                <div class="sc-metrics">
+                    <div>
+                        <div class="m-lbl">Delivery %</div>
+                        <div class="m-val-accent">{deliv_pct:.1f}%</div>
+                    </div>
+                    <div>
+                        <div class="m-lbl">Deliv Spike</div>
+                        <div class="m-val-gold">{d_spike:.2f}x</div>
+                    </div>
+                    <div>
+                        <div class="m-lbl">Deliv Value</div>
+                        <div class="m-val">₹{deliv_cr:,.1f} Cr</div>
+                    </div>
+                </div>
+                <div class="sc-footer">
+                    <div class="prog-wrap">
+                        <div class="prog-bg">
+                            <div class="prog-fill" style="width: {deliv_pct}%;"></div>
+                        </div>
+                    </div>
+                    <a href="{tv_url}" target="_blank" class="tv-btn">📈 Chart ↗</a>
+                </div>
+            </div>
+            """
+            st.markdown(card_html, unsafe_allow_html=True)
