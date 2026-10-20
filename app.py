@@ -28,7 +28,7 @@ min_deliv_val_cr = st.sidebar.number_input("குறைந்தபட்ச De
 spike_multiplier = st.sidebar.slider("Volume / Delivery Spike மடங்கு (X)", 1.2, 5.0, 1.5, step=0.1)
 exclude_etfs = st.sidebar.checkbox("🚫 ETFs & Liquid Bees-ஐ தவிர்க்கவும்", value=True)
 
-# ---------------- TOP F&O STOCKS LIST (NSE CORE) ----------------
+# ---------------- TOP F&O STOCKS LIST ----------------
 FO_STOCKS = set([
     "RELIANCE", "TCS", "HDFCBANK", "ICICIBANK", "INFY", "BHARTIARTL", "SBIN", "LICI", "ITC", "HINDUNILVR",
     "LT", "BAJFINANCE", "HCLTECH", "MARUTI", "SUNPHARMA", "TATAMOTORS", "ONGC", "NTPC", "KOTAKBANK",
@@ -43,7 +43,7 @@ FO_STOCKS = set([
 ])
 
 def get_sector_tag(symbol):
-    sym = symbol.upper()
+    sym = str(symbol).upper()
     if any(k in sym for k in ["BANK", "FIN", "HDFC", "ICICI", "AXIS", "KOTAK", "BAJAJ", "CHOLA", "MUTHOOT"]):
         return "BFSI"
     if any(k in sym for k in ["TCS", "INFY", "TECH", "WIPRO", "HCL", "COFORGE", "PERSIST"]):
@@ -137,7 +137,11 @@ def get_multi_day_data(target_days):
             df = fetch_or_load_bhavcopy(check_date)
             if df is not None and not df.empty:
                 b_deals = fetch_or_load_bulk_deals(check_date)
-                collected_dfs.append((check_date.strftime("%d-%b-%Y"), df, b_deals))
+                collected_dfs.append({
+                    "date": check_date.strftime("%d-%b-%Y"),
+                    "df": df,
+                    "bulk": b_deals
+                })
                 progress_bar.progress(len(collected_dfs) / target_days, 
                                       text=f"Loaded: {check_date.strftime('%d-%b-%Y')} ({len(collected_dfs)}/{target_days})")
         check_date -= timedelta(days=1)
@@ -159,12 +163,25 @@ with col2:
             os.remove(os.path.join(CACHE_DIR, f))
         st.session_state.market_data = None
         st.toast("கேட்ச் (Cache) கிளியர் செய்யப்பட்டது!")
+        st.rerun()
 
 # ---------------- DATA PROCESSING & CORRELATION ----------------
-data_list = st.session_state.market_data
+raw_data_list = st.session_state.market_data
+
+# Convert legacy tuple data if stored previously in session
+data_list = []
+if raw_data_list:
+    for item in raw_data_list:
+        if isinstance(item, dict):
+            data_list.append(item)
+        elif isinstance(item, (list, tuple)):
+            d_label = item[0]
+            d_df = item[1]
+            d_bulk = item[2] if len(item) > 2 else pd.DataFrame()
+            data_list.append({"date": d_label, "df": d_df, "bulk": d_bulk})
 
 if data_list:
-    available_dates = [d[0] for d in data_list]
+    available_dates = [d["date"] for d in data_list]
     
     st.markdown("---")
     c_date, c_info = st.columns([1.5, 2.5])
@@ -174,33 +191,29 @@ if data_list:
         st.info(f"தேதி: **{selected_date_label}** | ஃபில்டர்: **>= {min_deliv_pct_global}% Deliv** & **₹{min_turnover_cr} Cr Turnover**")
 
     selected_idx = available_dates.index(selected_date_label)
-    target_day_df = data_list[selected_idx][1].copy()
-    bulk_df = data_list[selected_idx][2]
+    target_day_df = data_list[selected_idx]["df"].copy()
+    bulk_df = data_list[selected_idx]["bulk"]
 
-    # ETF Filtration
     if exclude_etfs:
         etf_keywords = ['BEES', 'ETF', 'LIQUID', 'NIFTY', 'SENSEX', 'GOLD', 'SILVER', 'IETF', 'CASE', 'ADD', 'BETA', 'ALPHA', 'GILT', 'BOND']
         pattern = '|'.join(etf_keywords)
         target_day_df = target_day_df[~target_day_df['SYMBOL'].str.contains(pattern, case=False, na=False)].copy()
         target_day_df = target_day_df[~((target_day_df['CLOSE_PRICE'].between(999, 1001)) & (target_day_df['HIGH_PRICE'] - target_day_df['LOW_PRICE'] < 1))].copy()
 
-    # Fundamental Price Action Metrics
     target_day_df['PRICE_CHG_PCT'] = (((target_day_df['CLOSE_PRICE'] - target_day_df['PREV_CLOSE']) / target_day_df['PREV_CLOSE']) * 100).round(2)
     target_day_df['TURNOVER_CR'] = (target_day_df['TURNOVER_LACS'] / 100).round(2)
     target_day_df['DELIV_VAL_CR'] = ((target_day_df['DELIV_QTY'] * target_day_df['CLOSE_PRICE']) / 10000000).round(2)
     target_day_df['CANDLE'] = target_day_df.apply(lambda r: "🟢 Green" if r['CLOSE_PRICE'] >= r['OPEN_PRICE'] else "🔴 Red", axis=1)
 
-    # 1. Close Near High % (0% = Day Low, 100% = Day High)
     high_low_diff = target_day_df['HIGH_PRICE'] - target_day_df['LOW_PRICE']
     target_day_df['CLOSE_NEAR_HIGH'] = (
         (target_day_df['CLOSE_PRICE'] - target_day_df['LOW_PRICE']) / 
         high_low_diff.replace(0, 0.001) * 100
     ).round(1)
 
-    # 2. Historical Averages for Spikes
     remaining_days = data_list[selected_idx + 1:]
     if len(remaining_days) > 0:
-        hist_dfs = [d[1] for d in remaining_days]
+        hist_dfs = [d["df"] for d in remaining_days]
         hist_concat = pd.concat(hist_dfs)
         avg_stats = hist_concat.groupby('SYMBOL').agg(
             AVG_DELIV_QTY=('DELIV_QTY', 'mean'),
@@ -215,35 +228,38 @@ if data_list:
         merged['DELIV_SPIKE_X'] = 1.0
         merged['TRD_SPIKE_X'] = 1.0
 
-    # 3. 3-Day Streak Calculation
     if len(data_list) >= (selected_idx + 3):
-        d0 = data_list[selected_idx][1].set_index('SYMBOL')['DELIV_QTY']
-        d1 = data_list[selected_idx + 1][1].set_index('SYMBOL')['DELIV_QTY']
-        d2 = data_list[selected_idx + 2][1].set_index('SYMBOL')['DELIV_QTY']
+        d0 = data_list[selected_idx]["df"].set_index('SYMBOL')['DELIV_QTY']
+        d1 = data_list[selected_idx + 1]["df"].set_index('SYMBOL')['DELIV_QTY']
+        d2 = data_list[selected_idx + 2]["df"].set_index('SYMBOL')['DELIV_QTY']
         streak_df = pd.DataFrame({'D0': d0, 'D1': d1, 'D2': d2}).dropna()
         streak_symbols = streak_df[(streak_df['D0'] > streak_df['D1']) & (streak_df['D1'] > streak_df['D2'])].index.tolist()
         merged['3D_STREAK'] = merged['SYMBOL'].isin(streak_symbols)
     else:
         merged['3D_STREAK'] = False
 
-    # 4. F&O and Sector Tagging
     merged['SEGMENT'] = merged['SYMBOL'].apply(lambda x: "⚡ F&O" if x in FO_STOCKS else "CASH")
     merged['SECTOR'] = merged['SYMBOL'].apply(get_sector_tag)
 
-    # 5. Bulk Deals Correlation
-    if not bulk_df.empty and 'SYMBOL' in bulk_df.columns:
-        bulk_deals_summary = bulk_df.groupby('SYMBOL').agg(
-            BUY_COUNT=('BUY/SELL', lambda x: (x.str.strip().str.upper() == 'BUY').sum()),
-            CLIENT=('CLIENT NAME', lambda x: ', '.join(x.dropna().unique()[:2]))
-        ).reset_index()
-        merged = pd.merge(merged, bulk_deals_summary, on='SYMBOL', how='left')
-        merged['BULK_DEAL'] = merged['BUY_COUNT'].apply(lambda x: "🔥 YES" if x > 0 else ("⚠️ SELL" if pd.notnull(x) else "-"))
-        merged['CLIENT'] = merged['CLIENT'].fillna("-")
+    if isinstance(bulk_df, pd.DataFrame) and not bulk_df.empty and 'SYMBOL' in bulk_df.columns:
+        b_col_buy = 'BUY/SELL' if 'BUY/SELL' in bulk_df.columns else ('BUY_SELL' if 'BUY_SELL' in bulk_df.columns else None)
+        b_col_client = 'CLIENT NAME' if 'CLIENT NAME' in bulk_df.columns else ('CLIENT_NAME' if 'CLIENT_NAME' in bulk_df.columns else None)
+        
+        if b_col_buy and b_col_client:
+            bulk_deals_summary = bulk_df.groupby('SYMBOL').agg(
+                BUY_COUNT=(b_col_buy, lambda x: (x.astype(str).str.strip().str.upper() == 'BUY').sum()),
+                CLIENT=(b_col_client, lambda x: ', '.join(x.dropna().astype(str).unique()[:2]))
+            ).reset_index()
+            merged = pd.merge(merged, bulk_deals_summary, on='SYMBOL', how='left')
+            merged['BULK_DEAL'] = merged['BUY_COUNT'].apply(lambda x: "🔥 YES" if x > 0 else ("⚠️ SELL" if pd.notnull(x) else "-"))
+            merged['CLIENT'] = merged['CLIENT'].fillna("-")
+        else:
+            merged['BULK_DEAL'] = "-"
+            merged['CLIENT'] = "-"
     else:
         merged['BULK_DEAL'] = "-"
         merged['CLIENT'] = "-"
 
-    # Base Filter
     base_df = merged[
         (merged['TURNOVER_CR'] >= min_turnover_cr) & 
         (merged['DELIV_VAL_CR'] >= min_deliv_val_cr) &
@@ -258,7 +274,7 @@ if data_list:
         st.markdown(f"**தேதி:** `{selected_date_label}` | **தேர்ந்தெடுக்கப்பட்ட ஸ்டாக்ஸ்:** `{len(df_to_show)}`")
         
         if df_to_show.empty:
-            st.warning(f"இந்த கண்டிஷனில் ஸ்டாக்ஸ் எதுவும் வரவில்லை. ஃபில்டரை சற்று தளர்த்திப் பார்க்கவும்.")
+            st.warning("இந்த கண்டிஷனில் ஸ்டாக்ஸ் எதுவும் வரவில்லை. ஃபில்டரை சற்று தளர்த்திப் பார்க்கவும்.")
             return
 
         st.dataframe(
